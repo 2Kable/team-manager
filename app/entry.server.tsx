@@ -5,12 +5,12 @@
  */
 
 import { PassThrough } from "node:stream";
-
 import type { AppLoadContext, EntryContext } from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
+import { initSchema, seed } from "./.server/database.init";
 
 const ABORT_DELAY = 5_000;
 
@@ -138,3 +138,12 @@ function handleBrowserRequest(
     setTimeout(abort, ABORT_DELAY);
   });
 }
+
+async function prepareDB() {
+  await initSchema();
+  await seed();
+}
+
+prepareDB()
+  .then()
+  .catch((error) => console.error(error));
