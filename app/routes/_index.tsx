@@ -9,9 +9,11 @@ export async function loader() {
 export default function Index() {
   const teams = useLoaderData<typeof loader>();
   return (
-    <div className="grid grid-cols-4 gap-4">
-      {teams.map((team) => (
-        <Team class="basis-1/4" {...team}></Team>
+    <div className="flex items-start p-10 gap-4 flex-wrap">
+      {teams.map((team, i) => (
+        <div className="shrink-0">
+          <Team key={i} {...team} />
+        </div>
       ))}
     </div>
   );
