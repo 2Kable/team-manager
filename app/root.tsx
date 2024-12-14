@@ -6,7 +6,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
-import {NextUIProvider} from "@nextui-org/react";
+import { NextUIProvider } from "@nextui-org/react";
 
 import "./tailwind.css";
 
@@ -34,9 +34,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <NextUIProvider>
-          {children}
-          <ScrollRestoration />
-          <Scripts />
+          <main className="dark text-foreground bg-background min-h-screen">
+            {children} 
+            <ScrollRestoration />
+            <Scripts />
+          </main>
         </NextUIProvider>
       </body>
     </html>
