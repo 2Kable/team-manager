@@ -83,14 +83,38 @@ export async function seed() {
   }
 
   // Set Team Members
+  let [{ count: res }] = await sql`SELECT count(*) FROM team;`;
   const memberRow = await sql`SELECT * FROM member`;
   const teamRow = await sql`SELECT * FROM team`;
-  console.log(memberRow, teamRow);
-  for (let i = 0; i < memberRow.length; i++) {
-    const teamId = Math.floor(i / teamRow.length);
-    console.log(teamId);
-    await sql`INSERT INTO team_member (team, member) VALUES (${teamRow[teamId].id}, ${memberRow[i].id})`;
+  if (res === 0) {
+    for (let i = 0; i < memberRow.length; i++) {
+      const teamId = Math.floor(i / teamRow.length);
+      console.log(teamId);
+      await sql`INSERT INTO team_member (team, member) VALUES (${teamRow[teamId].id}, ${memberRow[i].id})`;
+    }
   }
 
-  // Set Team relation ship
+  // Set Team relationship
+  const subteams = [
+    {
+      parent_team: teamRow[0].id,
+      team: teamRow[4].id,
+    },
+    {
+      parent_team: teamRow[1].id,
+      team: teamRow[3].id,
+    },
+    {
+      parent_team: teamRow[1].id,
+      team: teamRow[4].id,
+    },
+  ];
+  [{ count: res }] = await sql`SELECT count(*) FROM team_hierarchy;`;
+  if (res === 0) {
+    await sql`INSERT INTO team_hierarchy ${sql(
+      subteams,
+      "parent_team",
+      "team"
+    )}`;
+  }
 }
