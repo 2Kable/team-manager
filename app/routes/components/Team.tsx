@@ -1,10 +1,19 @@
 import { Card, CardBody, CardHeader, Divider, User } from "@nextui-org/react";
+import { Team } from "~/.server/groups";
 
-export default function Team(team) {
+export default function Team({
+  team,
+  breadcrumbs,
+}: {
+  team: Team;
+  breadcrumbs: string[];
+}) {
   return (
     <Card className="">
       <CardBody>
-        <CardHeader>
+        <CardHeader className="block pt-0">
+          <small class="text-xs italic">{breadcrumbs.join(" - ")}</small>
+          <br />
           <h3>{team.name}</h3>
         </CardHeader>
         <Divider />
@@ -33,9 +42,15 @@ export default function Team(team) {
           <>
             <Divider />
             <p className="py-2">Sub teams:</p>
-            {team.subteams.map((subteam, i) => (
-              <Team key="{i}" {...subteam}></Team>
-            ))}
+            <div class="px-5">
+              {team.subteams.map((subteam) => (
+                <Team
+                  key="{subteam.id}"
+                  team={subteam}
+                  breadcrumbs={[...breadcrumbs, team.name]}
+                ></Team>
+              ))}
+            </div>
           </>
         )}
       </CardBody>

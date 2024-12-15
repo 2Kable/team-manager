@@ -11,8 +11,8 @@ export default function Index() {
   return (
     <div className="flex items-start p-10 gap-4 flex-wrap">
       {teams.map((team) => (
-        <div className="shrink-0">
-          <Team key={team.id} {...team} />
+        <div key={team.id} className="shrink-0">
+          <Team team={team} breadcrumbs={[]} />
         </div>
       ))}
     </div>

@@ -11,6 +11,7 @@ export interface Team {
 }
 
 export interface Member {
+  id: string;
   name: string;
   role: string;
   active: boolean;
@@ -29,6 +30,7 @@ export async function getTeams(): Promise<any> {
     FROM team t
     LEFT JOIN team_member tm ON t.id = tm.team
     LEFT JOIN member m ON m.id = tm.member
+    -- This will duplicate member row for any additionnal parent team
     LEFT JOIN team_hierarchy h ON t.id = h.team
     ;
   `;
@@ -45,7 +47,7 @@ export async function getTeams(): Promise<any> {
       });
     }
     map.get(row.id)?.members.push({
-      //id: row.memberid,
+      id: row.memberid,
       name: row.membername,
       role: row.memberrole,
       active: !!row.memberactive,
