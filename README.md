@@ -59,6 +59,7 @@ I wanted the team query to return all teams and members in a single query
 ```
 
 This will return a row per team member that I can post-process by the server before return the request
+
 `LEFT JOIN team_hierarchy h ON t.id = h.team` will duplicate the results if team can have mulitple parent, causing mulitple team member
 
 ### Notes on production deployment considerations
