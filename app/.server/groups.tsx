@@ -110,6 +110,9 @@ export async function getTeam(teamId: string) {
 }
 
 export function setParentTeam(teamId: string, parentTeamId?: string) {
+  if (parentTeamId === teamId) {
+    return;
+  }
   if (!parentTeamId) {
     return sql`DELETE FROM team_hierarchy WHERE team = ${teamId}`;
   }

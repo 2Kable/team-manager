@@ -1,12 +1,11 @@
 import { Card, CardBody, CardHeader, Divider, User } from "@nextui-org/react";
 import { Link } from "@remix-run/react";
-import { Team } from "~/.server/groups";
 
 export default function Team({
   team,
   breadcrumbs,
 }: {
-  team: Team;
+  team;
   breadcrumbs: string[];
 }) {
   return (
@@ -22,14 +21,15 @@ export default function Team({
         <Divider />
         <p className="py-2">Departement: {team.metadata.departement}</p>
         <Divider />
+
         <p>Members:</p>
 
         <div className="p-3">
-          {team.members.map((member, i) => (
+          {team.members.map((member) => (
             <div key={member.id}>
               <User
                 avatarProps={{
-                  src: `https://i.pravatar.cc/?u=${member.name.replace(
+                  src: `https://i.pravatar.cc/?u=${member.name?.replace(
                     " ",
                     ""
                   )}@pravatar.com`,

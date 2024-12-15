@@ -53,10 +53,13 @@ export async function initSchema() {
 }
 
 export async function seed() {
+  await sql`DELETE FROM team_hierarchy;`;
+  await sql`DELETE FROM team_member;`;
+  await sql`DELETE FROM member;`;
+  await sql`DELETE FROM team;`;
   // Create member
-  let [{ count }] = await sql`SELECT count(*) FROM member;`;
   let members: Member[] = [];
-  for (; count < 25; count++) {
+  for (let count = 0; count < 25; count++) {
     members.push({
       name: faker.person.fullName(),
       role: faker.person.jobTitle(),
@@ -68,9 +71,8 @@ export async function seed() {
   }
 
   // Create teams
-  let [{ count: teamCount }] = await sql`SELECT count(*) FROM team;`;
   let teams: any[] = [];
-  for (; teamCount < 5; teamCount++) {
+  for (let teamCount = 0; teamCount < 5; teamCount++) {
     teams.push({
       name: faker.company.name(),
       metadata: JSON.stringify({
@@ -83,15 +85,11 @@ export async function seed() {
   }
 
   // Set Team Members
-  let [{ count: res }] = await sql`SELECT count(*) FROM team;`;
   const memberRow = await sql`SELECT * FROM member`;
   const teamRow = await sql`SELECT * FROM team`;
-  if (res === 0) {
-    for (let i = 0; i < memberRow.length; i++) {
-      const teamId = Math.floor(i / teamRow.length);
-      console.log(teamId);
-      await sql`INSERT INTO team_member (team, member) VALUES (${teamRow[teamId].id}, ${memberRow[i].id})`;
-    }
+  for (let i = 0; i < memberRow.length; i++) {
+    const teamId = Math.floor(i / teamRow.length);
+    await sql`INSERT INTO team_member (team, member) VALUES (${teamRow[teamId].id}, ${memberRow[i].id})`;
   }
 
   // Set Team relationship
@@ -104,17 +102,6 @@ export async function seed() {
       parent_team: teamRow[1].id,
       team: teamRow[3].id,
     },
-    {
-      parent_team: teamRow[1].id,
-      team: teamRow[4].id,
-    },
   ];
-  [{ count: res }] = await sql`SELECT count(*) FROM team_hierarchy;`;
-  if (res === 0) {
-    await sql`INSERT INTO team_hierarchy ${sql(
-      subteams,
-      "parent_team",
-      "team"
-    )}`;
-  }
+  await sql`INSERT INTO team_hierarchy ${sql(subteams, "team", "parent_team")}`;
 }
