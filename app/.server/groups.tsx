@@ -74,3 +74,48 @@ export async function getTeams(): Promise<any> {
   // Remove child teams
   return tree.filter((row) => !row.parent_team);
 }
+
+export async function getTeam(teamId: string) {
+  const rows = await sql`
+    SELECT 
+      t.id as id , t.name as name, t.metadata as meta,
+      m.id as memberid, m.name as membername, m.role as memberrole, m.active as memberactive,
+      parent_team
+    FROM team t
+    LEFT JOIN team_member tm ON t.id = tm.team
+    LEFT JOIN member m ON m.id = tm.member
+    -- This will duplicate member row for any additionnal parent team
+    LEFT JOIN team_hierarchy h ON t.id = h.team
+    WHERE t.id = ${teamId}
+    LIMIT 1
+    ;
+  `;
+  const team: TeamRow = {
+    id: rows[0].id,
+    name: rows[0].name,
+    metadata: JSON.parse(rows[0].meta),
+    members: [],
+    subteams: [],
+    parent_team: rows[0].parent_team,
+  };
+  for (const row of rows) {
+    team.members.push({
+      id: row.memberid,
+      name: row.membername,
+      role: row.memberrole,
+      active: !!row.memberactive,
+    });
+  }
+  return team;
+}
+
+export function setParentTeam(teamId: string, parentTeamId?: string) {
+  if (!parentTeamId) {
+    return sql`DELETE FROM team_hierarchy WHERE team = ${teamId}`;
+  }
+  return sql`
+    INSERT INTO team_hierarchy (team, parent_team) VALUES (${teamId}, ${parentTeamId})
+    ON CONFLICT (team)
+    DO UPDATE SET parent_team = ${parentTeamId};
+  `;
+}

@@ -47,7 +47,7 @@ export async function initSchema() {
       parent_team uuid not null
         constraint team_hierarchy_pk
           references team,
-      primary key (team, parent_team)
+      primary key (team)
     );
   `;
 }
