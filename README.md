@@ -18,6 +18,17 @@ Run the dev server:
 npx remix vite:dev
 ```
 
+## Missing Features
+
+> I didn't have the time to complete the assignement, the following feature are missing:
+
+- Edit team details (Update Form)
+- Handle member role changes (Form)
+
+This would have required an additionnal hour to complete
+
+> I didn't put any Tests as i would not have the time to setup the environment in the 5 hours
+
 ## Answers:
 
 ### Any design/technical decisions made
@@ -31,18 +42,6 @@ This allow the MCD to support the following feature:
 
 - Members can have multiple team
 - Team can have multiple parent team (for upcoming update)
-
-> I didn't have the time to complete the assignement, the following feature are missing:
-
-- Manage team members
-- Edit team details
-- Handle member role changes
-
-This would have required an additionnal hour to complete
-
-> I didn't put any Tests as i would not have the time to setup the environment in the 5 hours
-
-> 
 
 ### Query design decisions
 
@@ -66,7 +65,7 @@ This will return a row per team member that I can post-process by the server bef
 
 Deployment would be fairly easy:
 
-1. I would rely on GCP Cloud Run, which allow container to run in KNative (serverless kubernetes environement) and a hosted postgres instance
+1. I would rely on GCP Cloud Run or Fargate, which allow container to run in serverless container environement and a hosted postgres instance
 2. Disable the database Seeding on prod startup
 3. Add a github CI which build the remix app, and put it in a docker container
 4. Push the container on a docker reposiutory

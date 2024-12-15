@@ -87,7 +87,6 @@ export async function getTeam(teamId: string) {
     -- This will duplicate member row for any additionnal parent team
     LEFT JOIN team_hierarchy h ON t.id = h.team
     WHERE t.id = ${teamId}
-    LIMIT 1
     ;
   `;
   const team: TeamRow = {
@@ -121,4 +120,23 @@ export function setParentTeam(teamId: string, parentTeamId?: string) {
     ON CONFLICT (team)
     DO UPDATE SET parent_team = ${parentTeamId};
   `;
+}
+
+export async function getMembers() {
+  return sql`SELECT * FROM member`;
+}
+
+export async function setTeamMember(
+  team: Team["id"],
+  memberIds: Member["id"][]
+) {
+  const members = memberIds.map((member) => ({
+    team,
+    member,
+  }));
+  console.log(members);
+  await sql.begin(async (sql) => {
+    await sql`DELETE FROM team_member WHERE team = ${team}`;
+    await sql`INSERT INTO team_member ${sql(members)}`;
+  });
 }
